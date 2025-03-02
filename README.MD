@@ -12,11 +12,10 @@ With a transparent background and a minimalistic interface, you can focus on you
 
 ## Features
 
-* Transparent background for a distraction-free writing experience
+* Transparent background for a distraction-free reading experience
 * No interface, no menu, no distractions
 * Auto-scrolling with adjustable speed
-* Support for opening and saving files
-* Customizable font and layout
+* Customizable css style
 
 ## Usage
 
