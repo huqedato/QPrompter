@@ -1,0 +1,98 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Transparent Prompter</title>
+    <link rel="stylesheet" href="style.css">
+</head>
+
+<body>
+    <div id="header"></div> 
+    <textarea id="editor" placeholder="Start typing...
+    Ctrl+O to open a file
+    Ctrl+S to save
+    Ctrl+X to exit
+    "></textarea>
+
+    <script>
+        const { ipcRenderer } = require('electron');
+
+        const editor = document.getElementById('editor');
+
+        // Handle Ctrl+O (Open)
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'o') {
+                e.preventDefault();
+                ipcRenderer.invoke('open-file').then((result) => {
+                    if (result) {
+                        editor.value = result.content;
+                    }
+                });
+            }
+        });
+
+        // Handle Ctrl+S (Save)
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 's') {
+                e.preventDefault();
+                const content = editor.value;
+                ipcRenderer.invoke('save-file', content).then((filePath) => {
+                    if (filePath) {
+                        console.log(`File saved to: ${filePath}`);
+                    }
+                });
+            }
+        });
+
+        // Auto-scroll variables
+        let scrollSpeed = 0;
+        let isScrolling = false;
+        let scrollInterval;
+        const minSpeed = 0.1;
+        const maxSpeed = 10;
+        const speedStep = 0.25;
+
+        // Handle Arrow Up/Down keys for auto-scroll
+        document.addEventListener('keydown', (e) => {
+            if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+                e.preventDefault(); 
+
+                // Adjust speed
+                if (e.key === 'ArrowDown') {
+                    scrollSpeed = Math.min(scrollSpeed + speedStep, maxSpeed);
+                } else {
+                    scrollSpeed = Math.max(scrollSpeed - speedStep, minSpeed);
+                }
+
+                // Start scrolling if not already active
+                if (!isScrolling && scrollSpeed >= minSpeed) {
+                    isScrolling = true;
+                    scrollInterval = setInterval(() => {
+                        editor.scrollTop += scrollSpeed;
+                    }, 70); 
+                }
+            }
+
+            // Stop scrolling when blank space is pressed
+            if (e.key === ' ') {
+                if (!isScrolling) return;
+                e.preventDefault();
+                scrollSpeed = 0;
+                clearInterval(scrollInterval);
+                isScrolling = false;
+            }
+        });
+
+        // Ctrl+X to exit
+        document.addEventListener('keydown', (e) => {
+            if (e.ctrlKey && e.key === 'x') {
+                e.preventDefault();
+                ipcRenderer.send('app-quit');
+            }
+        });
+    </script>
+</body>
+
+</html>
