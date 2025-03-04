@@ -15,6 +15,7 @@ With a transparent background and a minimalistic interface, you can focus on you
 * Transparent background for a distraction-free reading experience
 * No interface, no menu, no distractions
 * Auto-scrolling with adjustable speed
+* Fast reading font ([Fast-Font](https://born2root.github.io/Fast-Font/))
 * Customizable css style
 
 ## Usage
